@@ -8,8 +8,8 @@ the .txt files in `/xamx/`, and in `/examples/`.
 
 ## Requirements
 
-Python (preferably 3.11, newer versions should probably also work, but lower versions will very likely break something)
-
+* Python (preferably 3.11, newer versions should probably also work, but lower versions will very likely break something)
+* Rust stable toolchain with cargo
 ## How to use it
 
 Just drag&drop a single file, multiple files, or even whole folders onto the \_\_init\_\_.py file 
