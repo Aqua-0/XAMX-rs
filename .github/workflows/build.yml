@@ -37,26 +37,33 @@ jobs:
 
       - name: Prepare Linux artifact
         if: matrix.os == 'ubuntu-latest'
-        run: cp target/release/xamx-rs target/release/xamx-rs-linux-x86_64
+        run: |
+          mkdir -p dist
+          cp target/release/xamx-rs dist/xamx-rs
+          cd dist
+          zip ../target/release/xamx-rs-linux-x86_64.zip xamx-rs
 
       - name: Prepare Windows artifact
         if: matrix.os == 'windows-latest'
         shell: pwsh
-        run: Copy-Item target/release/xamx-rs.exe target/release/xamx-rs-windows-x86_64.exe
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Copy-Item target/release/xamx-rs.exe dist/xamx-rs.exe
+          Compress-Archive -Path dist/xamx-rs.exe -DestinationPath target/release/xamx-rs-windows-x86_64.zip -Force
 
       - name: Upload Linux artifact
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
         with:
           name: xamx-rs-linux-x86_64
-          path: xamx-rs/target/release/xamx-rs-linux-x86_64
+          path: xamx-rs/target/release/xamx-rs-linux-x86_64.zip
 
       - name: Upload Windows artifact
         if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v4
         with:
           name: xamx-rs-windows-x86_64
-          path: xamx-rs/target/release/xamx-rs-windows-x86_64.exe
+          path: xamx-rs/target/release/xamx-rs-windows-x86_64.zip
 
   release:
     if: startsWith(github.ref, 'refs/tags/v')
@@ -73,5 +80,5 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            release-assets/xamx-rs-linux-x86_64/xamx-rs-linux-x86_64
-            release-assets/xamx-rs-windows-x86_64/xamx-rs-windows-x86_64.exe
+            release-assets/xamx-rs-linux-x86_64/xamx-rs-linux-x86_64.zip
+            release-assets/xamx-rs-windows-x86_64/xamx-rs-windows-x86_64.zip
